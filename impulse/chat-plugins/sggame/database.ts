@@ -1,5 +1,5 @@
 import { FS } from '../../../lib';
-import { SGPlayer } from './types';
+import { type SGPlayer } from './types';
 import { SGItems } from './items';
 
 const DIR = 'config/sggame';
@@ -11,7 +11,7 @@ export const Database = {
 	load(userid: string): SGPlayer | null {
 		// If they run a command, cancel any pending auto-clears so we don't mess up their new screen
 		if (SGTimeouts.has(userid)) {
-			clearTimeout(SGTimeouts.get(userid)!);
+			clearTimeout(SGTimeouts.get(userid));
 			SGTimeouts.delete(userid);
 		}
 		try {
@@ -20,10 +20,16 @@ export const Database = {
 			if (player.introState === undefined) {
 				player.introState = player.party.length > 0 ? 3 : 0;
 			}
+			if (player.money === undefined) {
+				player.money = 1000;
+			}
+			if (player.location === 'Route 1' || !player.location) {
+				player.location = 'Route 1 (Kanto)';
+			}
 			if (player.bag && player.bag['expall'] === undefined) {
 				player.bag['expall'] = 1;
 			}
-			
+
 			// Enforce max item quantities
 			if (player.bag) {
 				for (const item in player.bag) {
@@ -37,7 +43,7 @@ export const Database = {
 					}
 				}
 			}
-			
+
 			// Extract lastMessage and clear it from DB so it only shows once
 			if (player.lastMessage) {
 				const msg = player.lastMessage;
@@ -45,7 +51,7 @@ export const Database = {
 				Database.save(userid, player); // Clear from disk
 				player.lastMessage = msg; // Keep in memory for this render cycle
 			}
-			
+
 			return player;
 		} catch (e) {
 			return null;
@@ -64,10 +70,11 @@ export const Database = {
 				potion: 5,
 				expall: 1,
 			},
-			location: 'Route 1',
+			money: 1000,
+			location: 'Route 1 (Kanto)',
 			introState: 0,
 		};
 		this.save(userid, player);
 		return player;
-	}
+	},
 };
