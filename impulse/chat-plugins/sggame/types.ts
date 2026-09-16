@@ -7,6 +7,8 @@ export interface SGPokemon {
 	status: string;
 	moves: string[];
 	item?: string;
+	gender?: 'M' | 'F' | 'N';
+	shiny?: boolean;
 }
 
 export interface SGPlayer {
@@ -16,6 +18,7 @@ export interface SGPlayer {
 	bag: Record<string, number>;
 	location: string;
 	introState: number;
+	money?: number;
 	pendingEvolutions?: { partyIndex: number, evoSpecies: string }[];
 	pendingMoves?: { partyIndex: number, move: string }[];
 	lastMessage?: string;
